@@ -1,0 +1,331 @@
+---
+title: "Análise descritiva de dados - SAEB"
+author: "Aline de Almeida Ramos"
+date: "09/03/2021"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r um, include=FALSE, message=FALSE}
+options(repos=structure(c(CRAN="http://cran.r-project.org")))
+options(repos="https://cran.rstudio.com" )
+install.packages("pscl", repos = "https://cran.rstudio.com")
+```
+
+
+# Carregando a base de dados
+```{r carregandoBD, message=FALSE}
+getwd()
+setwd("C:/Users/Daniel/Desktop/Aline/CE1/Análise Descritiva")
+library(dplyr)
+library(scales)
+library(stargazer)
+#install.packages("csv")
+#install.packages("scales")
+amostra = read.csv("amostra_170098249.csv")
+
+```
+
+# Gráfico e tabela da variável Sexo
+```{r pizzaSexo, message=FALSE}
+amostra$SEXO[amostra$SEXO == "A"]<- "Masculino"
+amostra$SEXO[amostra$SEXO == "B"]<- "Feminino"
+#table(amostra$SEXO)
+jpeg(filename = "PizzaSexo.jpg")
+slices <- c(1015, 985)
+lbls <- c("Masculino", "Feminino")
+pct <- round(slices/sum(slices)*100, 1)
+lbls <- paste(lbls, pct) # add percents to labels
+lbls <- paste(lbls,"%",sep="") # ad % to labels
+pie(slices,labels = lbls, col=c("turquoise2","plum"))
+dev.off()
+#############################################
+tabela1 <- addmargins(table(amostra$SEXO))
+tabela_1 <- prop.table(tabela1)*100
+tabela_11 <- addmargins(tabela_1)
+
+a <- rbind(tabela1, tabela_11)
+row.names(a) <- c("Frequência Absoluta", "Frequência Relativa (%)")
+a <- t(a)
+stargazer(a)
+```
+
+# Gráfico e tabela da variável Região
+```{r graficoRegiao, message=FALSE}
+
+amostra$REGIAO[amostra$REGIAO == 1]<- "Norte"
+amostra$REGIAO[amostra$REGIAO == 2]<- "Nordeste"
+amostra$REGIAO[amostra$REGIAO == 3]<- "Sudeste"
+amostra$REGIAO[amostra$REGIAO == 4]<- "Sul"
+amostra$REGIAO[amostra$REGIAO == 5]<- "Centro-Oeste"
+ 
+abs <- table(amostra$REGIAO)
+prop <- prop.table(abs)
+
+jpeg(filename = "GraphRegiao.jpg")
+returns <- runif(100)
+yticks_val <- pretty_breaks(n=5)(returns)
+barplot(prop, main="Porcentagem de alunos por região",
+        xlab="Região", col=c("plum"),
+        ylab = "Frequência Relativa", yaxt="n")
+axis(2, at=yticks_val, lab=percent(yticks_val))
+dev.off()
+###############################
+tabela2 <- table(amostra$REGIAO)
+tabela_2 <- prop.table(tabela2)*100
+
+b <- rbind(tabela2, tabela_2)
+row.names(b) <- c("Frequência Absoluta", "Frequência Relativa")
+b <- t(b)
+stargazer(b)
+```
+# Gráfico e tabela da variável Dependência
+```{r graficoDependencia, message=FALSE}
+
+amostra$DEPENDENCIA_ADM[amostra$DEPENDENCIA_ADM == 1]<- "Federal"
+amostra$DEPENDENCIA_ADM[amostra$DEPENDENCIA_ADM == 2]<- "Estadual"
+amostra$DEPENDENCIA_ADM[amostra$DEPENDENCIA_ADM == 3]<- "Municipal"
+
+abs2 <- table(amostra$DEPENDENCIA_ADM)
+prop2 <- prop.table(abs2)
+
+jpeg(filename = "GraphDepen.jpg")
+returns <- runif(100)
+yticks_val <- pretty_breaks(n=5)(returns)
+barplot(prop2, main="Porcentagem de alunos por dependência",
+        xlab="Dependência", col=c("turquoise2"),
+        ylab = "Frequência Relativa", yaxt="n")
+axis(2, at=yticks_val, lab=percent(yticks_val))
+dev.off()
+###############################
+tabela3 <- table(amostra$DEPENDENCIA_ADM)
+tabela_3 <- prop.table(tabela3)
+
+c <- rbind(tabela3, tabela_3)
+row.names(c) <- c("Frequência Absoluta", "Frequência Relativa")
+c <- t(c)
+stargazer(c)
+
+```
+# Gráfico e tabela da variável Área
+```{r graficoarea, message=FALSE}
+amostra$AREA[amostra$AREA == 1]<- "Capital"
+amostra$AREA[amostra$AREA == 2]<- "Interior"
+jpeg(filename = "grapharea.jpg")
+slices <- c(379, 1621)
+lbls <- c("Capital", "Interior")
+pct <- round(slices/sum(slices)*100, 2)
+lbls <- paste(lbls, pct) # add percents to labels
+lbls <- paste(lbls,"%",sep="") # ad % to labels
+pie(slices,labels = lbls, col=c("turquoise2","plum"))
+dev.off()
+###############################
+tabela4 <- table(amostra$AREA)
+tabela_4 <- prop.table(tabela4)
+
+d <- rbind(tabela4, tabela_4)
+row.names(d) <- c("Frequência Absoluta", "Frequência Relativa")
+d <- t(d)
+stargazer(d)
+
+```
+# Gráfico e tabela da variável Raça - Cor
+```{r graficoRaça, message=FALSE}
+amostra$RACA_COR[amostra$RACA_COR == "A"]<- "Branca"
+amostra$RACA_COR[amostra$RACA_COR == "B"]<- "Preta"
+amostra$RACA_COR[amostra$RACA_COR == "C"]<- "Parda"
+amostra$RACA_COR[amostra$RACA_COR == "D"]<- "Amarela"
+amostra$RACA_COR[amostra$RACA_COR == "E"]<- "Indígena"
+amostra$RACA_COR[amostra$RACA_COR == "F"]<- "Não quero declarar"
+#abc<-table(amostra$RACA_COR)
+abs3 <- table(amostra$RACA_COR)
+prop3 <- prop.table(abs3)
+prop3_1 <- prop3[2:7]
+
+jpeg(filename = "GraphRaca.jpg")
+returns <- runif(100)
+yticks_val <- pretty_breaks(n=8)(returns)
+barplot(prop3_1, xlab = "Raça/Cor", col=c("turquoise2"),
+        ylab = "Frequência Relativa", yaxt="n", cex.names = 0.7)
+axis(2, at=yticks_val, lab=percent(yticks_val))
+dev.off()
+###############################
+tabela5 <- table(amostra$RACA_COR)
+tabela_5 <- prop.table(tabela5)
+
+e <- rbind(tabela5, tabela_5)
+row.names(e) <- c("Frequência Absoluta", "Frequência Relativa")
+e <- t(e)
+stargazer(e)
+```
+#graficos nota_mt
+```{r notas_math, message=FALSE}
+#summary(amostra$NOTA_MT)
+nota_mat <- seq(108,356,31)
+classes<-c("108-139","139-170","170-201","201-232","232-263",
+           "263-294","294-325","325-356")
+tabelamat <-table(cut(amostra$NOTA_MT,breaks=nota_mat,
+                      right=FALSE,labels=classes))
+tabela6 <- prop.table(tabelamat)
+totalmat<- addmargins(tabelamat)
+totaltabela6 <- addmargins(tabela6)
+f<- rbind(totalmat, totaltabela6)
+row.names(f) <- c("Frequência Absoluta", "Frequência Relativa")
+f <- t(f)
+stargazer(f)
+
+#gráficoimagem
+# Add a Normal Curve (Thanks to Peter Dalgaard)
+jpeg(filename = "matemat.jpg")
+x <- amostra$NOTA_MT
+h<-hist(x, breaks=c(108,139,170,201,232,263,294,325,356), col="plum",
+        ylim = c(0,600),ylab = "Quantidade de alunos",
+        xaxt="n", xlab = "Nota de matemática",
+        main=" ")
+axis(side=1, at=c(108,139,170,201,232,263,294,325,356))
+xfit<-seq(108,356,length=31)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="black", lwd=1)
+dev.off()
+install.packages("moments")
+library(moments)
+
+#tabelamedidasdeposição
+#summary(amostra$NOTA_MT)
+g <- rbind(mean(amostra$NOTA_MT),var(amostra$NOTA_MT), sd(amostra$NOTA_MT),min(amostra$NOTA_MT),max(amostra$NOTA_MT), median(amostra$NOTA_MT),quantile(amostra$NOTA_MT, probs =  0.25),quantile(amostra$NOTA_MT, 0.75),kurtosis(amostra$NOTA_MT), skewness(amostra$NOTA_MT))
+row.names(g) <- c("Média", "Variância","Desvio Padrão","Mínimo","Máximo", "Mediana", "Primeiro Quartil", "Terceiro Quartil", "Curtose", "Assimetria")
+g <- formatC(g, digits = 2, format = "f")
+stargazer(g)
+
+#Boxplot Nota_MT
+#install.packages("tidyverse")
+library(tidyverse)
+jpeg(filename = "boxplotmat.jpg")
+abc <-boxplot(amostra$NOTA_MT,  col="plum",
+    ylab= "Notas de Matemática",
+   ylim=c(80,400))
+dev.off()
+```
+
+#graficos nota_lp
+```{r notas_port, message=FALSE}
+#summary(amostra$NOTA_LP)
+nota_port <- seq(95,335,30)
+classes<-c("95-125","125-155","155-185","185-215","215-245",
+           "245-275","275-305","305-335")
+tabelaport <-table(cut(amostra$NOTA_LP,breaks=nota_port,
+                      right=FALSE,labels=classes))
+tabela7 <- prop.table(tabelaport)
+totalport<- addmargins(tabelaport)
+totaltabela7 <- addmargins(tabela7)
+h<- rbind(totalport, totaltabela7)
+row.names(h) <- c("Frequência Absoluta", "Frequência Relativa")
+h <- t(h)
+stargazer(h)
+
+#gráficoimagem
+# Add a Normal Curve (Thanks to Peter Dalgaard)
+jpeg(filename = "portugues.jpg")
+x <- amostra$NOTA_LP
+h<-hist(x, breaks=c(95,125,155,185,215,245,275,305,335), col="turquoise2",
+        ylim = c(0,600),ylab = "Quantidade de alunos",
+        xaxt="n", xlab = "Nota de Português",
+        main=" ")
+axis(side=1, at=c(95,125,155,185,215,245,275,305,335))
+xfit<-seq(95,335,length=30)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="black", lwd=1)
+dev.off()
+#install.packages("moments")
+library(moments)
+
+#tabelamedidasdeposição
+#summary(amostra$NOTA_MT)
+i <- rbind(mean(amostra$NOTA_LP),var(amostra$NOTA_LP), sd(amostra$NOTA_LP), min(amostra$NOTA_LP),max(amostra$NOTA_LP), median(amostra$NOTA_LP),quantile(amostra$NOTA_LP, 0.25),quantile(amostra$NOTA_LP, 0.75),kurtosis(amostra$NOTA_LP), skewness(amostra$NOTA_LP))
+row.names(i) <- c("Média", "Variância","Desvio Padrão","Mínimo","Máximo", "Mediana", "Primeiro Quartil", "Terceiro Quartil", "Curtose", "Assimetria")
+i <- formatC(i, digits = 2, format = "f")
+stargazer(i)
+
+#Boxplot Nota_MT
+#install.packages("tidyverse")
+library(tidyverse)
+jpeg(filename = "boxplotport.jpg")
+abcd <-boxplot(amostra$NOTA_LP,  col="turquoise2",
+    ylab= "Notas de Português",
+   ylim=c(80,400))
+dev.off()
+
+# Comparação entre os dois boxplots
+jpeg(filename = "double.jpg")
+double <- boxplot(amostra$NOTA_LP,amostra$NOTA_MT, col=c("turquoise2","plum"),
+    ylab= "Notas", names = c("Português", "Matemática"),
+   ylim=c(80,400))
+dev.off()
+```
+
+#Grafico ter pc
+```{r terpc, message=FALSE}
+
+amostra$COMPUTADOR[amostra$COMPUTADOR == "A"]<- "Não tem"
+amostra$COMPUTADOR[amostra$COMPUTADOR == "B"]<- "Sim, um"
+amostra$COMPUTADOR[amostra$COMPUTADOR == "C"]<- "Sim, dois"
+amostra$COMPUTADOR[amostra$COMPUTADOR == "D"]<- "Sim, três"
+amostra$COMPUTADOR[amostra$COMPUTADOR == "E"]<- "Sim, quatro ou mais"
+abs8 <- table(amostra$COMPUTADOR)
+prop8 <- prop.table(abs8)
+prop8_1 <- prop8[2:6]
+
+jpeg(filename = "Graphpc.jpg")
+returns <- runif(100)
+yticks_val <- pretty_breaks(n=8)(returns)
+barplot(prop8_1, xlab = "tem computador em casa", col=c("plum"),
+        ylab = "Frequência Relativa", yaxt="n",ylim =c (0,0.5), cex.names = 0.7)
+axis(2, at=yticks_val, lab=percent(yticks_val))
+dev.off()
+############
+tabela9 <- table(amostra$COMPUTADOR)
+tabela_9 <- prop.table(tabela9)
+
+k <- rbind(tabela9, tabela_9)
+row.names(k) <- c("Frequência Absoluta", "Frequência Relativa")
+k <- t(k)
+stargazer(k)
+```
+
+#GráficoBiblioteca
+```{r biblioteca, message=FALSE}
+table(amostra$BIBLIOTECA)
+amostra$BIBLIOTECA[amostra$BIBLIOTECA == "A"]<- "Sempre ou quase sempre"
+amostra$BIBLIOTECA[amostra$BIBLIOTECA == "B"]<- "De vez em quando"
+amostra$BIBLIOTECA[amostra$BIBLIOTECA == "C"]<- "Nunca ou quase nunca"
+amostra$BIBLIOTECA[amostra$BIBLIOTECA == "D"]<- "A escola não possui biblioteca ou sala de leitura"
+jpeg(filename = "graphbiblioteca.jpg")
+slices <- c(652, 812,536)
+lbls <- c("Sempre ou
+quase sempre - ", "De vez em
+quando - ","Nunca ou quase
+nunca - ")
+pct <- round(slices/sum(slices)*100, 2)
+lbls <- paste(lbls, pct) # add percents to labels
+lbls <- paste(lbls,"%",sep="") # ad % to labels
+pie(slices,labels = lbls,  col=c("turquoise2","plum","darkgoldenrod1"))
+dev.off()
+################
+tabela10<- table(amostra$BIBLIOTECA)
+tabela_10 <- prop.table(tabela10)
+
+l <- rbind(tabela10, tabela_10)
+row.names(l) <- c("Frequência Absoluta", "Frequência Relativa")
+l <- t(l)
+stargazer(l)
+
+```
